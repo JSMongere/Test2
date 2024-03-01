@@ -1,0 +1,25 @@
+import requests
+
+def currency_converter(amount, from_currency, to_currency):
+    url = f'https://api.exchangerate-api.com/v4/latest/{from_currency}'
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        return 'Error in fetching exchange rates'
+    
+    rates = response.json()['rates']
+    
+    if to_currency not in rates:
+        return 'Currency not found'
+        
+    exchange_rate = rates[to_currency]
+    converted_amount = amount * exchange_rate
+    
+    return converted_amount
+
+amount = float(input('Enter amount to convert: '))
+from_currency = input('Enter currency to convert from: ')
+to_currency = input('Enter currency to convert to: ')
+
+result = currency_converter(amount, from_currency, to_currency)
+print(f'{amount} {from_currency} is equal to {result} {to_currency}')
