@@ -1,0 +1,109 @@
+import pygame
+import random
+
+pygame.init()
+
+# Установка размеров экрана
+screen_width = 800
+screen_height = 600
+block_size = 30
+
+# Цвета
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+
+# Создание окна
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Tetris")
+
+clock = pygame.time.Clock()
+
+# Определение фигур
+shapes = [    [[1, 1, 1, 1]],
+    [[1, 1, 1], [0, 1, 0]],
+    [[1, 1, 1], [1, 0, 0]],
+    [[1, 1], [1, 1]],
+    [[1, 1, 0], [0, 1, 1]],
+    [[0, 1, 1], [1, 1, 0]],
+    [[1, 1, 1], [0, 0, 1]]
+]
+
+# Функция отрисовки блока
+def draw_block(x, y, color):
+    pygame.draw.rect(screen, color, pygame.Rect(x * block_size, y * block_size, block_size, block_size))
+    pygame.draw.rect(screen, BLACK, pygame.Rect(x * block_size, y * block_size, block_size, block_size), 1)
+
+# Функция проверки столкновений
+def check_collision(x, y, shape):
+    for row in range(len(shape)):
+        for col in range(len(shape[row])):
+            if shape[row][col] == 1:
+                if x + col < 0 or x + col >= screen_width / block_size or y + row >= screen_height / block_size:
+                    return True
+    return False
+
+# Генерация новой фигуры
+def new_shape():
+    shape = random.choice(shapes)
+    x = screen_width // 2 // block_size - len(shape[0]) // 2
+    y = 0
+    return shape, x, y
+
+# Инициализация
+current_shape, current_x, current_y = new_shape()
+game_over = False
+grid = [[0 for _ in range(screen_width // block_size)] for _ in range(screen_height // block_size)]
+
+while not game_over:
+    screen.fill(WHITE)
+
+    for row in range(len(grid)):
+        for col in range(len(grid[row])):
+            if grid[row][col] != 0:
+                draw_block(col, row, grid[row][col])
+
+    # Управление фигурой
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        if not check_collision(current_x - 1, current_y, current_shape):
+            current_x -= 1
+    if keys[pygame.K_RIGHT]:
+        if not check_collision(current_x + 1, current_y, current_shape):
+            current_x += 1
+    if keys[pygame.K_DOWN]:
+        if not check_collision(current_x, current_y + 1, current_shape):
+            current_y += 1
+
+    # Падение фигуры
+    if not check_collision(current_x, current_y + 1, current_shape):
+        current_y += 1
+    else:
+        for row in range(len(current_shape)):
+            for col in range(len(current_shape[row])):
+                if current_shape[row][col] == 1:
+                    grid[current_y + row][current_x + col] = 1
+
+        current_shape, current_x, current_y = new_shape()
+
+    for row in range(len(current_shape)):
+        for col in range(len(current_shape[row])):
+            if current_shape[row][col] == 1:
+                draw_block(current_x + col, current_y + row, RED)
+
+    pygame.display.flip()
+
+    for row in range(len(grid)):
+        if all(grid[row]):
+            del grid[row]
+            grid.insert(0, [0 for _ in range(screen_width // block_size)])
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+
+    clock.tick(5)
+
+pygame.quit()
