@@ -1,0 +1,44 @@
+import pygame
+import sys
+from pygame.locals import *
+
+pygame.init()
+
+# Установка размера окна
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
+window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+pygame.display.set_caption('Танчики')
+
+# Цвета
+WHITE = (255, 255, 255)
+
+# Позиция танка
+tank_x = 400
+tank_y = 300
+
+# Скорость танка
+tank_speed = 5
+
+while True:
+    window.fill(WHITE)
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+
+    keys = pygame.key.get_pressed()
+
+    if keys[K_LEFT]:
+        tank_x -= tank_speed
+    if keys[K_RIGHT]:
+        tank_x += tank_speed
+    if keys[K_UP]:
+        tank_y -= tank_speed
+    if keys[K_DOWN]:
+        tank_y += tank_speed
+
+    pygame.draw.rect(window, (0, 0, 0), (tank_x, tank_y, 50, 50))
+
+    pygame.display.update()
