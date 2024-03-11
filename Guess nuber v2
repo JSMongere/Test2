@@ -1,0 +1,18 @@
+import random
+
+def guess_number():
+    number = random.randint(1, 10)
+    
+    print("Я загадал число от 1 до 10. Попробуй угадать!")
+    
+    while True:
+        guess = int(input("Введи число: "))
+        
+        if guess == number:
+            print("Поздравляю! Ты угадал число!")
+            break
+        else:
+            print("Неправильно. Попробуй еще раз.")
+
+if __name__ == "__main__":
+    guess_number()
