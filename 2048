@@ -1,0 +1,84 @@
+import random
+
+def initialize_board():
+    board = [[0]*4 for _ in range(4)]
+    for _ in range(2):
+        row = random.randint(0, 3)
+        col = random.randint(0, 3)
+        board[row][col] = 2 if random.random() < 0.9 else 4
+    return board
+
+def print_board(board):
+    for row in board:
+        print(row)
+
+def merge_left(row):
+    new_row = [0]*4
+    index = 0
+    for i in range(4):
+        if row[i] != 0:
+            if new_row[index] == 0:
+                new_row[index] = row[i]
+            elif new_row[index] == row[i]:
+                new_row[index] *= 2
+                index += 1
+            else:
+                index += 1
+                new_row[index] = row[i]
+    return new_row
+
+def move_left(board):
+    new_board = [merge_left(row) for row in board]
+    return new_board
+
+def transpose(board):
+    return [list(i) for i in zip(*board)]
+
+def move(board, direction):
+    if direction == 'left':
+        return move_left(board)
+    elif direction == 'right':
+        return [row[::-1] for row in move_left([row[::-1] for row in board])]
+    elif direction == 'up':
+        return transpose(move_left(transpose(board)))
+    elif direction == 'down':
+        return transpose([row[::-1] for row in move_left([row[::-1] for row in transpose(board)])])
+
+def add_new_tile(board):
+    new_board = board
+    empty_cells = [(x, y) for x in range(4) for y in range(4) if board[x][y] == 0]
+    if empty_cells:
+        x, y = random.choice(empty_cells)
+        new_board[x][y] = 2 if random.random() < 0.9 else 4
+    return new_board
+
+def check_game_over(board):
+    for row in board:
+        if 0 in row:
+            return False
+        for i in range(3):
+            if row[i] == row[i+1]:
+                return False
+    transposed_board = transpose(board)
+    for row in transposed_board:
+        if 0 in row:
+            return False
+        for i in range(3):
+            if row[i] == row[i+1]:
+                return False
+    return True
+
+def main():
+    board = initialize_board()
+    print_board(board)
+    
+    while not check_game_over(board):
+        direction = input("Enter direction (left, right, up, down): ")
+        board = move(board, direction)
+        board = add_new_tile(board)
+        print_board(board)
+    
+    print("Game Over!")
+
+if __name__ == '__main__':
+    main()
