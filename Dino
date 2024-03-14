@@ -1,0 +1,64 @@
+import pygame
+import random
+
+# Инициализация Pygame
+pygame.init()
+
+# Настройки окна
+width = 800
+height = 400
+screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Dinosaur Game")
+
+# Цвета
+white = (255, 255, 255)
+black = (0, 0, 0)
+
+# Параметры динозавра
+dino_width = 50
+dino_height = 50
+dino_x = 50
+dino_y = height - dino_height - 50
+dino_speed = 5
+
+# Параметры препятствий
+cactus_width = 20
+cactus_height = 40
+cactus_x = width
+cactus_y = height - cactus_height - 50
+cactus_speed = 5
+
+# Флаг для управления игрой
+game_over = False
+
+clock = pygame.time.Clock()
+
+# Основной игровой цикл
+while not game_over:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE]:
+        dino_y -= dino_speed
+
+    # Перемещение препятствий
+    cactus_x -= cactus_speed
+    if cactus_x <= 0:
+        cactus_x = width
+        cactus_height = random.randint(20, 60)
+
+    # Проверка столкновения динозавра с препятствием
+    if dino_x + dino_width > cactus_x and dino_x < cactus_x + cactus_width and dino_y + dino_height > cactus_y:
+        game_over = True
+
+    # Отрисовка игровых объектов
+    screen.fill(white)
+    pygame.draw.rect(screen, black, (dino_x, dino_y, dino_width, dino_height))
+    pygame.draw.rect(screen, black, (cactus_x, cactus_y, cactus_width, cactus_height))
+    pygame.display.update()
+
+    clock.tick(30)
+
+pygame.quit()
