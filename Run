@@ -1,0 +1,46 @@
+import time
+import random
+import keyboard
+
+player_position = 10
+obstacle_position = 30
+score = 0
+
+def draw_game():
+    global player_position, obstacle_position, score
+    game = [' '] * 50
+    game[player_position] = 'P'
+    game[obstacle_position] = 'O'
+    print("".join(game))
+    print("Score: ", score)
+
+def move_player():
+    global player_position
+    if keyboard.is_pressed('right') and player_position < 49:
+        player_position += 1
+
+def move_obstacle():
+    global obstacle_position, score
+    if obstacle_position > 0:
+        obstacle_position -= 1
+    else:
+        obstacle_position = 49
+        score += 1
+
+def check_collision():
+    global player_position, obstacle_position
+    if player_position == obstacle_position:
+        return True
+    return False
+
+def game_over():
+    print("Game Over! Your final score is: ", score)
+    exit()
+
+while True:
+    draw_game()
+    move_player()
+    move_obstacle()
+    if check_collision():
+        game_over()
+    time.sleep(0.1)
