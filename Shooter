@@ -1,0 +1,71 @@
+import pygame
+import sys
+
+pygame.init()
+
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Shooter Game")
+
+player = pygame.Rect(400, 500, 50, 50)
+player_speed = 5
+
+enemy = pygame.Rect(400, 100, 50, 50)
+enemy_speed = 3
+
+bullet = pygame.Rect(0, 0, 5, 10)
+bullet_speed = 7
+bullet_state = "ready" # ready - пуля не видна, fire - пуля вылетела
+
+def move_player():
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        player.x -= player_speed
+    if keys[pygame.K_RIGHT]:
+        player.x += player_speed
+
+def move_enemy():
+    global enemy_speed
+    enemy.y += enemy_speed
+    if enemy.y > 600:
+        enemy.y = 0
+
+def fire_bullet():
+    global bullet_state
+    bullet_state = "fire"
+    bullet.x = player.x + player.width // 2 - bullet.width // 2
+    bullet.y = player.y - bullet.height
+
+def collision_detection():
+    if bullet.colliderect(enemy):
+        return True
+    return False
+
+while True:
+    screen.fill((0, 0, 0))
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and bullet_state == "ready":
+                fire_bullet()
+
+    move_player()
+    move_enemy()
+
+    if bullet_state == "fire":
+        screen.fill((255, 0, 0), bullet)
+        bullet.y -= bullet_speed
+        if bullet.y < 0:
+            bullet_state = "ready"
+
+    if collision_detection():
+        enemy_speed += 1
+        enemy.x = 400
+        enemy.y = 100
+
+    pygame.draw.rect(screen, (255, 255, 255), player)
+    pygame.draw.rect(screen, (0, 255, 0), enemy)
+
+    pygame.display.flip()
