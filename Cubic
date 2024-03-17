@@ -1,0 +1,42 @@
+import pygame
+from pygame.locals import *
+
+# Инициализация Pygame
+pygame.init()
+
+# Устанавливаем размеры окна
+display = (800, 600)
+screen = pygame.display.set_mode(display)
+clock = pygame.time.Clock()
+
+# Цвета
+white = (255, 255, 255)
+black = (0, 0, 0)
+
+# Угол поворота
+angle = 0
+
+# Основной игровой цикл
+while True:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            quit()
+
+    screen.fill(white)
+
+    # Вращение куба
+    angle += 1
+    if angle >= 360:
+        angle = 0
+
+    # Рисуем куб
+    pygame.draw.rect(screen, black, (300, 200, 200, 200))
+    pygame.draw.polygon(screen, black, [(300, 200), (400, 150), (600, 150), (500, 200)])
+    pygame.draw.polygon(screen, black, [(500, 200), (600, 250), (600, 450), (500, 400)])
+    pygame.draw.polygon(screen, black, [(400, 350), (500, 400), (600, 450), (500, 350)])
+    pygame.draw.polygon(screen, black, [(400, 350), (300, 300), (300, 200), (400, 250)])
+    pygame.draw.polygon(screen, black, [(300, 300), (400, 250), (500, 350), (400, 400)])
+
+    pygame.display.flip()
+    clock.tick(60)
