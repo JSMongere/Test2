@@ -1,0 +1,23 @@
+from abc import ABC, abstractmethod
+
+class InteractionProtocol(ABC):
+
+    @abstractmethod
+    def send_message(self, message):
+        pass
+
+    @abstractmethod
+    def receive_message(self):
+        pass
+
+class SimpleInteractionProtocol(InteractionProtocol):
+
+    def __init__(self, partner):
+        self.partner = partner
+
+    def send_message(self, message):
+        print(f'Sending message: {message} to {self.partner}')
+
+    def receive_message(self):
+        message = input('Enter message: ')
+        print(f'Received message: {message}')
